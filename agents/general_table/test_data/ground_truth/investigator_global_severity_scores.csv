@@ -1,0 +1,10 @@
+"Score, Measure Treatment:","Metronidazole Gel, 1%","Noritate Cream, 1%",Metronidazole Vehicle
+0 = Clear,30 (5.4 %),30 (5.4 %),10 (5.3 %)
+1 = Almost Clear,184 (33.0 %),166 (30.0 %),42 (22.2 %)
+2 = Mild,174 (31.2 %),173 (31.3 %),53 (28.0 %)
+3 = Moderate,159 (28.5 %),178 (32.2 %),77 (40.7 %)
+4 = Severe,10 (1.8 %),6 (1.1 %),7 (3.7 %)
+Total,557,553,189
+Dichotomized Success:,214 (38.4 %),196 (35.4 %),52 (27.5 %)
+P-value superiority test,0.0078,0.0491,
+Non-inferiority Conf. Interval,"(-2.8%, 7.9%)",,
