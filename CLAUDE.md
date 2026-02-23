@@ -10,25 +10,41 @@ Multi-agent PDF table extraction pipeline using Google Gemini (vision LLM). A ro
 
 ```
 HumaAI/
+├── papers/                      # Paper-centric data (one dir per paper)
+│   ├── ctt_lancet_2024/
+│   │   ├── paper.pdf
+│   │   └── ground_truth/        # p7_fig1_forest_plot.csv, etc.
+│   ├── hodkinson_bmj_2022/
+│   │   ├── paper.pdf
+│   │   └── ground_truth/
+│   └── cpy_document/
+│       ├── paper.pdf
+│       └── ground_truth/
 ├── agents/                      # One sub-package per extraction agent
+│   ├── router/                  # Page classification (stub)
+│   │   ├── prompt.py            # ROUTER_PROMPT string
+│   │   └── classify.py          # classify_page() stub
 │   ├── forest_plot/             # Forest plot table extraction
 │   │   ├── prompt.py            # FOREST_PLOT_PROMPT string
 │   │   ├── schema.py            # ForestPlotExtraction, PageForestPlotResult
-│   │   ├── extract.py           # extract_forest_plots_from_page(), stitch_forest_plot_results()
-│   │   ├── test_data/           # Agent-specific PDFs + ground truth
-│   │   └── notebook.ipynb       # Thin driver: config → run → eval
-│   └── general_table/           # General table extraction (same pattern)
+│   │   └── extract.py           # extract_forest_plots_from_page(), stitch_forest_plot_results()
+│   ├── general_table/           # General table extraction
+│   │   ├── prompt.py            # GENERAL_TABLE_PROMPT string
+│   │   ├── schema.py            # TableSegment, PageExtractionResult
+│   │   └── extract.py           # extract_tables_from_page(), stitch_page_results()
+│   └── simple_table/            # Simple table extraction (stub)
 │       ├── prompt.py, schema.py, extract.py
-│       ├── test_data/
-│       └── notebook.ipynb
+│       └── (follows same pattern as general_table)
 ├── shared/                      # Code reused across all agents
 │   ├── client.py                # Gemini client + DEFAULT_MODEL
 │   ├── pdf.py                   # render_pages() — pdf2image wrapper
 │   └── eval.py                  # normalize_text(), compare_tables(), print_accuracy_summary()
-├── notebooks/                   # Archived exploratory notebooks
-├── example sources/             # Source PDFs
+├── notebooks/                   # Eval and exploration notebooks
+│   ├── eval_forest_plot.ipynb   # Catalog-driven forest plot eval
+│   ├── eval_simple_table.ipynb  # Catalog-driven simple table eval
+│   └── archive/                 # Old exploratory notebooks
+├── table_catalog.csv            # Single index of all tables across all papers
 ├── output/                      # Generated at runtime (gitignored)
-├── table_catalog.csv
 ├── .env                         # GEMINI_API_KEY (gitignored)
 └── requirements.txt
 ```
@@ -37,22 +53,35 @@ HumaAI/
 
 ```bash
 pip install -r requirements.txt
-# Run an agent notebook:
-cd agents/forest_plot && jupyter notebook notebook.ipynb
+# Run an eval notebook:
+cd notebooks && jupyter notebook eval_forest_plot.ipynb
 ```
 
 **Dependencies:** google-genai, python-dotenv, pdf2image, pandas, pdfplumber
 
 ## Key Patterns
 
+- **Paper-centric data:** Each paper lives in `papers/<paper_id>/` with its PDF and ground truth CSVs
+- **Catalog-driven eval:** `table_catalog.csv` is the single index — notebooks filter by agent and status to run evals
 - **Agent modules** take `client` and `model` as function args (injected, not imported) for testability
 - **Shared code** lives in `shared/` — client setup, PDF rendering, eval utilities
 - **Each agent** has: `prompt.py` (prompt string), `schema.py` (Pydantic models), `extract.py` (core logic)
-- **Notebooks** are thin drivers that import from modules — keep logic in `.py` files
-- **Test data** lives in each agent's `test_data/` dir (PDFs symlinked from `example sources/`)
+- **Notebooks** are thin eval drivers that import from modules — keep logic in `.py` files
+
+## Naming Conventions
+
+- **paper_id:** `<first_author_or_acronym>_<journal>_<year>` (e.g., `ctt_lancet_2024`)
+- **Ground truth files:** `p<page>_<figure_id>_<descriptive_name>.csv`
+- **Catalog columns:** paper_id, page, figure_id, table_type, agent, ground_truth_path, description, difficulty, status
+
+## Adding a New Paper
+
+1. Create `papers/<paper_id>/` with `paper.pdf` and `ground_truth/` dir
+2. Add ground truth CSVs named `p<page>_<figure_id>_<type>.csv`
+3. Add rows to `table_catalog.csv` for each table/figure
 
 ## Adding a New Agent
 
 1. Create `agents/<name>/` with `__init__.py`, `prompt.py`, `schema.py`, `extract.py`
-2. Add `test_data/` with PDFs and ground truth CSVs
-3. Add `notebook.ipynb` importing from `shared/` and the agent module
+2. Add a corresponding `notebooks/eval_<name>.ipynb`
+3. Update catalog entries to reference the new agent

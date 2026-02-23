@@ -8,7 +8,7 @@ __pycache__/
 
 # Output (generated at runtime)
 output/
-**/test_data/output/
+**/output/
 
 # OS
 .DS_Store

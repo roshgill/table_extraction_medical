@@ -1,0 +1,12 @@
+,Events (% per annum),,Observed-expected,,Rate ratio (CI)
+,Statin,Placebo,o-e,var(o-e),
+Low-intensity or moderate-intensity statin,(n=12109),(n=11941),,,
+Ketosis or glucose control complications,308 (0.6),299 (0.6),2.2,151.7,1.01 (99% CI 0.82-1.25)
+Worsening HbA1c,2732 (6.4),2484 (5.9),181.8,1284.2,1.15 (99% CI 1.07-1.24)
+Escalation of diabetes co-medication,4081 (9.3),3924 (9.0),100.9,1680.4,1.06 (99% CI 1.00-1.13)
+Any worsening glycaemia,6224 (16.3),5902 (15.4),252.5,2737.5,1.10 (95% CI 1.06-1.14)
+High-intensity statin,(n=805),(n=846),,,
+Ketosis or glucose control complications,7 (0.3),5 (0.2),1.1,3.0,1.42 (99% CI 0.32-6.30)
+Worsening HbA1c,108 (3.9),78 (2.7),20.2,45.8,1.55 (99% CI 1.06-2.27)
+Escalation of diabetes co-medication,254 (11.9),231 (10.0),20.5,120.8,1.18 (99% CI 0.94-1.50)
+Any worsening glycaemia,338 (16.0),295 (12.8),33.3,157.2,1.24 (95% CI 1.06-1.44)

@@ -2,21 +2,19 @@
 
 FOREST_PLOT_PROMPT = """You are a table extraction agent specialized in forest plots from clinical research papers.
 
-You will receive an image of a page that may contain one or more forest plots. Your job is to extract ONLY the tabular data — ignore the graphical plot (dots, lines, diamonds, axes).
+You will receive an image of a page that will contain a forest plot. Your job is to extract ONLY the tabular data — ignore the graphical plot (dots, lines, diamonds, axes).
 
-### What to extract:
-- The title or caption of the forest plot
-- Column headers exactly as they appear, preserving any groupings
-- Every row of data exactly as it appears, in order, including subgroup labels, subtotals, and overall/summary rows
-- All numeric values exactly as printed
-- Group-level annotations (e.g., interaction p-values, heterogeneity statistics)
-- Footnotes if visible
+Reproduce the table exactly as it appears:
+- If there are two header rows (a spanning header and sub-headers beneath it), output both rows
+- Preserve row order from top to bottom
+- Copy all values exactly as printed — do not round, interpret, or reformat numbers
+- If a cell is empty, leave it empty
+- Group header rows (like section titles with sample sizes) are their own rows
 
 ### Output format:
-- Return each forest plot as a separate ForestPlotExtraction entry
+- Return forest plot as a ForestPlotExtraction entry
 - headers: list of column header strings
 - rows: list of lists, where each inner list has the same length as headers
-- footnotes: list of footnote strings visible below the plot
 - plot_appears_complete: false if the table continues beyond the bottom of the page
 
 ### Rules:

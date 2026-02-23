@@ -55,31 +55,33 @@ def stitch_forest_plot_results(
     Returns a list of (title, DataFrame) tuples.
     """
     all_plots: list[tuple[str, list[str], list[list[str]]]] = []
-    current_title = None
+    current_label = None
     current_headers = None
     current_rows: list[list[str]] = []
+    plot_counter = 0
 
     for page_num in sorted(page_results.keys()):
         for fp in page_results[page_num].forest_plots:
-            if current_title is not None and not fp.headers:
+            if current_label is not None and not fp.headers:
                 # Continuation — append rows
                 current_rows.extend(fp.rows)
             else:
                 # New forest plot — save previous if exists
-                if current_title is not None:
-                    all_plots.append((current_title, current_headers, current_rows))
-                current_title = fp.title
+                if current_label is not None:
+                    all_plots.append((current_label, current_headers, current_rows))
+                plot_counter += 1
+                current_label = f"p{page_num}_plot{plot_counter}"
                 current_headers = fp.headers
                 current_rows = list(fp.rows)
 
     # Don't forget the last one
-    if current_title is not None:
-        all_plots.append((current_title, current_headers, current_rows))
+    if current_label is not None:
+        all_plots.append((current_label, current_headers, current_rows))
 
     # Convert to DataFrames
     results = []
-    for title, headers, rows in all_plots:
+    for label, headers, rows in all_plots:
         df = pd.DataFrame(rows, columns=headers)
-        results.append((title, df))
+        results.append((label, df))
 
     return results

@@ -8,7 +8,11 @@ def normalize_text(text) -> str:
     """Normalize text for comparison: strip whitespace, collapse spaces, remove commas/periods, lowercase."""
     if pd.isna(text):
         return ""
-    text = str(text).replace(",", "").replace(".", "").lower()
+    text = str(text)
+    text = text.replace('\u00b7', '.')   # middle dot → period
+    text = text.replace('\u2013', '-')   # en-dash → hyphen
+    text = text.replace('\u2212', '-')   # minus sign → hyphen
+    text = text.replace(",", "").replace(".", "").lower()
     return " ".join(text.split())
 
 
@@ -50,6 +54,16 @@ def compare_tables(df_truth: pd.DataFrame, df_extracted: pd.DataFrame) -> dict:
                     "Extracted": extracted_val,
                 })
 
+    # Row-level match: fraction of rows where ALL cells match
+    rows_fully_correct = 0
+    for row_idx in range(compare_rows):
+        row_correct = all(
+            normalize_text(df_truth.iloc[row_idx, col_idx]) == normalize_text(df_extracted.iloc[row_idx, col_idx])
+            for col_idx in range(compare_cols)
+        )
+        if row_correct:
+            rows_fully_correct += 1
+
     return {
         "truth_count": truth_rows,
         "extracted_count": extracted_rows,
@@ -59,6 +73,8 @@ def compare_tables(df_truth: pd.DataFrame, df_extracted: pd.DataFrame) -> dict:
         "total_cells": total_cells,
         "correct_cells": correct_cells,
         "cell_accuracy": correct_cells / total_cells if total_cells > 0 else 0,
+        "row_match": rows_fully_correct / compare_rows if compare_rows > 0 else 0,
+        "rows_fully_correct": rows_fully_correct,
         "mismatches": mismatches,
         "per_column_stats": per_column_stats,
     }
@@ -78,6 +94,7 @@ def print_accuracy_summary(results: dict):
     print(f"Total cells compared: {results['total_cells']}")
     print(f"Correct cells:        {results['correct_cells']}")
     print(f"Cell accuracy:        {results['cell_accuracy']:.1%}")
+    print(f"Row match:            {results['row_match']:.1%}  ({results['rows_fully_correct']}/{results['rows_compared']} rows fully correct)")
 
     if results["mismatches"]:
         print(f"\n{'=' * 60}")

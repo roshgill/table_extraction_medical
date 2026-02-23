@@ -4,7 +4,7 @@ from pdf2image import convert_from_path
 from PIL import Image
 
 
-def render_pages(pdf_path: str, pages: list[int], dpi: int = 300) -> dict[int, Image.Image]:
+def render_pages(pdf_path: str, pages: list[int], dpi: int = 400) -> dict[int, Image.Image]:
     """Render specific PDF pages as PIL images.
 
     Args:

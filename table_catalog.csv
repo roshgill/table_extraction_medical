@@ -1,3 +1,3 @@
-PDF File,Table #,Pages,Headers,Row Count,Type,Description
-CPY Document.pdf,1,22,"Score,Grade,Clinical Description",5,,
-CPY Document.pdf,1,49-51,"Investigator#, Name/Location, Dates of Participation*, Patient Identifier Series",54,,
+paper_id,page,figure_id,table_type,variation,description,ground_truth_path,cell_accuracy,row_match,notes,status
+ctt_lancet_2024,7,fig1,forest_plot,subgroups with interaction p-values,Statin vs placebo new-onset diabetes by intensity,papers/ctt_lancet_2024/ground_truth/p7_fig1_forest_plot.csv,100.0%,13,, complete
+ctt_lancet_2024,9,fig1,forest_plot,subgroups with interaction p-values,Statin vs placebo new-onset diabetes by intensity,papers/ctt_lancet_2024/ground_truth/p9_fig3_forest_plot.csv,100.0%,11,, complete
