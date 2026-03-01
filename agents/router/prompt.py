@@ -13,6 +13,7 @@ You will receive an image of a PDF page. Identify ALL tables or figures on this 
 - type: one of the types above
 - description: one sentence describing the content
 - instruction: a targeted instruction telling the extraction agent exactly which table to extract and any helpful context (e.g. "Extract the forest plot in the upper half of the page showing subgroup analyses for diabetes risk")
+- bbox: a bounding box enclosing the entire table/figure as percentage coordinates (0–100) of the page dimensions: {"x_min", "y_min", "x_max", "y_max"}. The box should tightly enclose the full table including its title, column headers, all data rows, footnotes, and any graphical elements (e.g. the forest plot diamond/CI lines). Err on the side of including slightly too much area rather than cutting off any content.
 
 ### Rules:
 - If the page contains NO tables or figures, return an empty list.
