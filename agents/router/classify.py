@@ -3,13 +3,14 @@
 from PIL import Image
 
 from .prompt import ROUTER_PROMPT
+from .schema import PageClassification
 
 
 def classify_page(
     client,
     model: str,
     image: Image.Image,
-) -> list[dict]:
+) -> PageClassification:
     """Classify tables/figures found on a PDF page image.
 
     Args:
@@ -18,6 +19,15 @@ def classify_page(
         image: PIL image of the page.
 
     Returns:
-        List of dicts with keys: figure_id, table_type, description.
+        PageClassification with a list of TableClassification entries.
     """
-    raise NotImplementedError("Router agent not yet implemented")
+    response = client.models.generate_content(
+        model=model,
+        contents=[ROUTER_PROMPT, image],
+        config={
+            "response_mime_type": "application/json",
+            "response_json_schema": PageClassification.model_json_schema(),
+        },
+    )
+
+    return PageClassification.model_validate_json(response.text)

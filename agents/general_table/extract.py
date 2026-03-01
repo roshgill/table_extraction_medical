@@ -12,6 +12,7 @@ def extract_tables_from_page(
     model: str,
     image: Image.Image,
     continuation_headers: list[str] | None = None,
+    instruction: str | None = None,
 ) -> PageExtractionResult:
     """Send a page image to Gemini and extract all tables.
 
@@ -23,6 +24,8 @@ def extract_tables_from_page(
             incomplete, pass its headers here so Gemini knows to continue it.
     """
     prompt = GENERAL_TABLE_PROMPT
+    if instruction:
+        prompt += f"\n\nSPECIFIC INSTRUCTION: {instruction}"
     if continuation_headers:
         prompt += f"""
 NOTE: The first table on this page is a CONTINUATION of a table from the previous page.

@@ -2,21 +2,21 @@
 
 ROUTER_PROMPT = """You are a table classification agent for clinical research papers.
 
-You will receive an image of a PDF page. Identify ALL tables or figures on this page
-and classify each one by type.
+You will receive an image of a PDF page. Identify ALL tables or figures on this page and classify each one.
 
-### Table types:
-- forest_plot: A forest plot with tabular data alongside a graphical plot
-- simple_table: A standard data table with headers and rows
-- league_table: A pairwise comparison matrix (e.g., network meta-analysis)
-- characteristics_table: A table describing trial or study characteristics
-- other: Any other tabular content
+### Table types (use exactly one per entry):
+- forest_plot — A forest plot: tabular data alongside a graphical plot with dots/diamonds/CIs on a number line
+- general_table — Any other table (standard data tables, characteristics tables, league tables, etc.)
 
-### Output format:
-For each table/figure found, return:
-- figure_id: An identifier like "table1", "fig1", etc.
-- table_type: One of the types above
-- description: Brief description of the table content
+### For each table/figure return:
+- label: a short human-readable identifier (e.g. "Table 1", "Figure 3", "top forest plot")
+- type: one of the types above
+- description: one sentence describing the content
+- instruction: a targeted instruction telling the extraction agent exactly which table to extract and any helpful context (e.g. "Extract the forest plot in the upper half of the page showing subgroup analyses for diabetes risk")
 
-If the page contains no tables or figures, return an empty list.
+### Rules:
+- If the page contains NO tables or figures, return an empty list.
+- If a single page has multiple distinct tables/figures, return one entry per table/figure.
+- A forest plot always has a graphical component (dots and confidence intervals on a number line) alongside tabular columns.
+- Standard numbered tables (Table 1, Table 2, etc.) are general_table even if they contain numerical data.
 """

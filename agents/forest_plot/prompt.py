@@ -15,6 +15,7 @@ Reproduce the table exactly as it appears:
 - Return forest plot as a ForestPlotExtraction entry
 - headers: list of column header strings
 - rows: list of lists, where each inner list has the same length as headers
+- footer: list of text lines that appear below the table (e.g. footnotes, p-values, legends). Empty list if none.
 - plot_appears_complete: false if the table continues beyond the bottom of the page
 
 ### Rules:

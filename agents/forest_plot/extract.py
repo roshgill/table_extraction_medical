@@ -12,6 +12,7 @@ def extract_forest_plots_from_page(
     model: str,
     image: Image.Image,
     continuation_context: dict | None = None,
+    instruction: str | None = None,
 ) -> PageForestPlotResult:
     """Send a page image to Gemini and extract forest plot tables.
 
@@ -23,6 +24,8 @@ def extract_forest_plots_from_page(
             from the previous page's incomplete forest plot, or None.
     """
     prompt = FOREST_PLOT_PROMPT
+    if instruction:
+        prompt += f"\n\nSPECIFIC INSTRUCTION: {instruction}"
     if continuation_context:
         prompt += f"""\n\nNOTE: The first forest plot on this page is a CONTINUATION from the previous page.
 Title: {continuation_context['title']}
@@ -52,36 +55,39 @@ def stitch_forest_plot_results(
     A forest plot with plot_appears_complete=False on one page is continued
     by the first forest plot on the next page (which shares the same title/headers).
 
-    Returns a list of (title, DataFrame) tuples.
+    Returns a list of (title, DataFrame, footer) tuples.
     """
-    all_plots: list[tuple[str, list[str], list[list[str]]]] = []
+    all_plots: list[tuple[str, list[str], list[list[str]], list[str]]] = []
     current_label = None
     current_headers = None
     current_rows: list[list[str]] = []
+    current_footer: list[str] = []
     plot_counter = 0
 
     for page_num in sorted(page_results.keys()):
         for fp in page_results[page_num].forest_plots:
             if current_label is not None and not fp.headers:
-                # Continuation — append rows
+                # Continuation — append rows and update footer
                 current_rows.extend(fp.rows)
+                current_footer = fp.footer
             else:
                 # New forest plot — save previous if exists
                 if current_label is not None:
-                    all_plots.append((current_label, current_headers, current_rows))
+                    all_plots.append((current_label, current_headers, current_rows, current_footer))
                 plot_counter += 1
                 current_label = f"p{page_num}_plot{plot_counter}"
                 current_headers = fp.headers
                 current_rows = list(fp.rows)
+                current_footer = fp.footer
 
     # Don't forget the last one
     if current_label is not None:
-        all_plots.append((current_label, current_headers, current_rows))
+        all_plots.append((current_label, current_headers, current_rows, current_footer))
 
     # Convert to DataFrames
     results = []
-    for label, headers, rows in all_plots:
+    for label, headers, rows, footer in all_plots:
         df = pd.DataFrame(rows, columns=headers)
-        results.append((label, df))
+        results.append((label, df, footer))
 
     return results
