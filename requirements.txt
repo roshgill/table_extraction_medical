@@ -3,3 +3,5 @@ pandas
 google-genai
 python-dotenv
 pdf2image
+lxml
+beautifulsoup4

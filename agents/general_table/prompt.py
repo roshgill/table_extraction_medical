@@ -3,14 +3,24 @@
 GENERAL_TABLE_PROMPT = """Extract ALL tables from this scanned PDF page image.
 
 INSTRUCTIONS:
-- There may be multiple separate tables on this page — return each one as a separate entry
-- For each table, identify the column headers and all data rows
-- Return headers as a list of strings and each row as a list of cell values
-- Preserve all text exactly as it appears (including leading zeros, punctuation, spacing)
+- Return each table as a separate entry, in top-to-bottom page order
+- Return headers as a list of strings; each row as a list of cell values
+- Preserve text exactly (leading zeros, punctuation, symbols like ≥ † %)
 - Each row must have the same number of values as there are headers
-- If a cell is empty, return an empty string for that cell
-- If a table continues beyond the bottom of this page, set table_appears_complete to false
-- If a table is fully contained on this page, set table_appears_complete to true
+- Empty cells → empty string ""
+
+SPANNING / MULTI-LEVEL HEADERS:
+- If a header spans multiple sub-columns (e.g. "Drug (N=100)" over "n" and "(%)"), emit one header per sub-column
+- Use the spanning header text for the first sub-column and "" for the rest
+- Example headers: ["", "Atorvastatin", "", "Fluvastatin", ""] where each drug spans n and (%) sub-columns
+- The second header row (sub-headers like "n", "(%)", "Mean", "(SE)") becomes the actual headers list
+
+HIERARCHICAL / GROUP ROWS:
+- Section headings or group labels that have no data → fill data cells with ""
+- Keep the label in the first column so row structure is preserved
+
+CONTINUATION:
+- If a table continues beyond the page bottom, set table_appears_complete to false
+- If fully contained, set table_appears_complete to true
 - Return headers only if this page contains that table's header row
-- Return tables in top-to-bottom order as they appear on the page
 """

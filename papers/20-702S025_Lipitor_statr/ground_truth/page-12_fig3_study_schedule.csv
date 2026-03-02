@@ -1,0 +1,20 @@
+Study Phase,Screening*,Lead-In Phase,,,,,Treatment Phase,,,,
+Visit Designation,1,2,3,4,5,6,7,8,9,10,11
+Study Week,,-4,-2,0,6,12,18,24,30,42,54***
+Titration Schedule**,,,,,,,,,,,
+atorvastatin,,,,10,A,B,C,,,,
+"simvastatin, pravastatin",,,,10,A,B,,,,,
+"lovastatin, fluvastatin",,,,20,B,C,,,,,
+Procedures,,,,,,,,,,,
+Medical Hx,X,,,,,,,,,,
+"Weight, Blood Pressure",X,X,X,X,X,X,X,X,X,X,X
+Physical Exam,,,,X,,,,,,,X^5
+ECG,,,,X^1,,,,,,,X^5
+Clinical Labs²,,X,,,,,,,,,X
+Safety Labs³,,,,X,X,X,X,X,X,X,
+Lipid Profile⁴,X,X,X,X,X,X,X,X,X,X,X
+Genotyping,,,,,,,,,,,X
+Dietary Counseling,X,X,X,X,X,X,X,X,X,X,X
+Food Frequency,,,X,,,,,,,,X
+Dispense Drug,,,,X,X,X,X,X,X,X,
+Adverse Events,,,,,X,X,X,X,X,X,X
