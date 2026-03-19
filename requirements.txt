@@ -5,3 +5,8 @@ python-dotenv
 pdf2image
 lxml
 beautifulsoup4
+numpy
+matplotlib
+pillow
+pydantic
+nest_asyncio
