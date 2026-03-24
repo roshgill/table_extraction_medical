@@ -1,1 +1,1 @@
-Our aim is to build a table extraction pipleine for medical documents
+Our aim is to build a table extraction pipeline for medical documents
