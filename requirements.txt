@@ -5,6 +5,11 @@ pdf2image
 # ── table extraction & structure ───────────────────────────────────
 lxml
 beautifulsoup4
+numpy
+matplotlib
+pillow
+pydantic
+nest_asyncio
 
 # ── TEDs metric (tree edit distance) ───────────────────────────────
 apted                        # shared/teds.py
