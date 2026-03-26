@@ -1,7 +1,19 @@
+# ── PDF processing ─────────────────────────────────────────────────
 pdfplumber>=0.11.3
-pandas
-google-genai
-python-dotenv
 pdf2image
+
+# ── table extraction & structure ───────────────────────────────────
 lxml
 beautifulsoup4
+
+# ── TEDs metric (tree edit distance) ───────────────────────────────
+apted                        # shared/teds.py
+
+# ── data ────────────────────────────────────────────────────────────
+pandas
+
+# ── LLM clients ────────────────────────────────────────────────────
+google-genai                 # Gemini fallback in agents/unitable_agent.py
+
+# ── config ──────────────────────────────────────────────────────────
+python-dotenv
