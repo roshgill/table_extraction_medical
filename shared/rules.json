@@ -1,0 +1,163 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "R001",
+      "name": "require_header",
+      "category": "structure",
+      "description": "Every table must have at least one non-empty header row (thead or first row with th elements).",
+      "condition": "num_header_rows == 0 or all header cells are empty",
+      "action": "route=LOW, flag=missing_header, do_not_extract",
+      "confidence_penalty": 40,
+      "table_types": [
+        "all"
+      ],
+      "status": "active",
+      "source": "initial"
+    },
+    {
+      "id": "R002",
+      "name": "column_count_consistency",
+      "category": "structure",
+      "description": "At least 65% of rows must share the same column count. Rows with colspan are allowed to differ.",
+      "condition": "modal_col_consistency < 0.65",
+      "action": "route=MEDIUM, flag=ragged_columns",
+      "confidence_penalty": 12,
+      "table_types": [
+        "all"
+      ],
+      "status": "active",
+      "source": "initial"
+    },
+    {
+      "id": "R003",
+      "name": "empty_cell_ratio",
+      "category": "content",
+      "description": "Tables with more than 55% empty cells are likely parsing collapses, not sparse data tables.",
+      "condition": "empty_cell_ratio > 0.62",
+      "action": "route=LOW, flag=sparse_parse",
+      "confidence_penalty": 25,
+      "table_types": [
+        "all"
+      ],
+      "status": "active",
+      "source": "initial"
+    },
+    {
+      "id": "R004",
+      "name": "single_col_collapse",
+      "category": "structure",
+      "description": "If more than 25% of body rows have exactly 1 cell, the table likely collapsed during extraction.",
+      "condition": "single_col_row_fraction > 0.25",
+      "action": "route=LOW, flag=column_collapse, retry_extraction",
+      "confidence_penalty": 30,
+      "table_types": [
+        "all"
+      ],
+      "status": "active",
+      "source": "initial"
+    },
+    {
+      "id": "R005",
+      "name": "span_sanity",
+      "category": "structure",
+      "description": "Any cell with colspan > 15 or rowspan > 20 indicates a corrupted span attribute from extraction.",
+      "condition": "any_cell_colspan > 50 or any_cell_rowspan > 20",
+      "action": "route=LOW, flag=span_overflow, strip_and_retry",
+      "confidence_penalty": 25,
+      "table_types": [
+        "all"
+      ],
+      "status": "active",
+      "source": "initial"
+    },
+    {
+      "id": "R006",
+      "name": "duplicate_row_detection",
+      "category": "content",
+      "description": "More than 20% identical body rows signals a repeated-extraction bug, not real data repetition.",
+      "condition": "duplicate_body_row_ratio > 0.45",
+      "action": "route=MEDIUM, flag=repeated_rows, deduplicate",
+      "confidence_penalty": 25,
+      "table_types": [
+        "all"
+      ],
+      "status": "active",
+      "source": "initial"
+    },
+    {
+      "id": "R007",
+      "name": "ocr_character_confusion",
+      "category": "content",
+      "description": "Detects l/1 and O/0 OCR substitutions common in scanned medical PDFs. More than 5% affected cells = untrusted numeric content.",
+      "condition": "ocr_artifact_ratio > 0.12",
+      "action": "route=LOW, flag=ocr_unreliable, request_reocr",
+      "confidence_penalty": 25,
+      "table_types": [
+        "all"
+      ],
+      "status": "active",
+      "source": "initial"
+    },
+    {
+      "id": "R008",
+      "name": "numeric_garble",
+      "category": "content",
+      "description": "Digits with embedded non-numeric characters (e.g. 12abc34) indicate OCR garbling of numbers, critical in medical tables.",
+      "condition": "numeric_garble_ratio > 0.1",
+      "action": "route=LOW, flag=numeric_unreliable, do_not_extract_values",
+      "confidence_penalty": 25,
+      "table_types": [
+        "all"
+      ],
+      "status": "active",
+      "source": "initial"
+    },
+    {
+      "id": "R009",
+      "name": "whitespace_dominance",
+      "category": "content",
+      "description": "Cells containing only whitespace, dashes, or dots (layout fill characters) exceeding 45% of non-empty cells.",
+      "condition": "whitespace_cell_ratio > 0.45",
+      "action": "route=MEDIUM, flag=layout_artefacts",
+      "confidence_penalty": 10,
+      "table_types": [
+        "all"
+      ],
+      "status": "active",
+      "source": "initial"
+    },
+    {
+      "id": "R010",
+      "name": "cell_length_outlier",
+      "category": "content",
+      "description": "Any cell longer than 800 characters likely contains merged paragraph text, not a table cell value.",
+      "condition": "max_cell_length > 800",
+      "action": "route=MEDIUM, flag=merged_cell_text, truncate_or_split",
+      "confidence_penalty": 10,
+      "table_types": [
+        "all"
+      ],
+      "status": "active",
+      "source": "initial"
+    },
+    {
+      "id": "R011",
+      "name": "numeric_garble_strict",
+      "category": "learned",
+      "description": "Stricter secondary rule for 'numeric_garble' learned from PubTabNet FN analysis. 25th-percentile of missed values was 0.100, well below primary threshold 0.18.",
+      "condition": "numeric_garble_ratio > 0.15",
+      "action": "route=LOW, flag=numeric_garble_strict",
+      "confidence_penalty": 25,
+      "table_types": [
+        "all"
+      ],
+      "status": "active",
+      "source": "learned_iteration_1",
+      "threshold_key": "numeric_garble_ratio",
+      "threshold_op": ">",
+      "threshold_value": 0.15
+    }
+  ],
+  "last_updated": "2026-03-16T14:26:23.407405"
+}
