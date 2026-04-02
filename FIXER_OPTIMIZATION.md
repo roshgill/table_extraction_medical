@@ -84,3 +84,37 @@ The notebook produces:
 - A **test set validation** with train/test gap
 - A **baseline comparison** table: UniTable-only vs hybrid per test image
 - The **final best system prompt**, ready to drop into the production pipeline
+
+---
+
+## PubTabNet Evaluation Results
+
+### Setup
+- **Dataset:** `eval_unitable_results/` — 500 triplets (image, UniTable pred HTML, GT HTML) from PubTabNet
+- **Filter:** TEDS ≥ 0.85 → 302 eligible samples
+- **Notebook:** `notebooks/dspy_fixer_pubtabnet.ipynb`
+
+### Run 1 — gemini-3-flash-preview
+Config: T=1, S=1, N=2, I=2 (smoke test scale)
+**Result:** Hybrid worse than UniTable baseline (exact scores not retained).
+
+### Run 2 — gemini-3.1-pro-preview
+Config: T=1, S=1, N=5, I=8 (smoke test scale)
+
+| Metric | Value |
+|---|---|
+| Best train composite | 0.8403 |
+| UniTable-only mean TEDS (test) | 0.901 |
+| Best hybrid mean TEDS (test) | 0.796 |
+| Net improvement | **-0.105 (regression)** |
+| NO_CHANGES rate | 0% — fixer always made changes |
+| Stopped at | Iteration 3 (plateau 3/3) |
+| Diversity | 0.963–0.974 — candidate collapse throughout |
+
+**Failure modes identified:**
+- **T=1 kills the signal** — with one training image, `std=0.0` on every score, the variance penalty is useless and the composite equals the mean. Optimization becomes random selection among near-identical prompts.
+- **Candidate collapse** — diversity >0.963 (above 0.95 warning threshold) on every iteration. Meta-prompt generates near-identical candidates regardless of temperature variation.
+- **Decimal comma bug** — fixer converted `22.7 → 22,7`, `31.2 → 31,2` (European locale format). A systematic wrong correction.
+- **0% NO_CHANGES** — fixer always intervened; never conservative. On a dataset where UniTable already scores 0.901, this is fatal.
+
+**Root cause:** T=1 is too small for any meaningful optimization. The next run should use T=16, S=30 (see calculation: ≈7 hours with EVAL_WORKERS=8, N=5, I=8).
