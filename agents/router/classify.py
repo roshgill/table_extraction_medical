@@ -13,6 +13,8 @@ def classify_page(
 ) -> PageClassification:
     """Classify tables/figures found on a PDF page image.
 
+    For bounding box output, never include titles and labels surrounding the table. Only the table itself.
+
     Args:
         client: google.genai.Client instance.
         model: Model name string.

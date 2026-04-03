@@ -14,3 +14,4 @@ if not api_key or api_key == "your-api-key-here":
 client = genai.Client()
 
 DEFAULT_MODEL = "gemini-3-flash-preview"
+PRO_MODEL = "gemini-3.1-pro-preview"
