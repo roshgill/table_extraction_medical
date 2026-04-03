@@ -1,6 +1,13 @@
 # ── PDF processing ─────────────────────────────────────────────────
 pdfplumber>=0.11.3
 pdf2image
+pymupdf                      # fitz — fast PDF rendering at 72 DPI (pipeline.ipynb Step 1)
+
+# ── local table detection (pipeline.ipynb Step 2) ───────────────────
+transformers                 # microsoft/table-transformer-detection
+torch
+torchvision
+tokenizers                   # UniTable vocab tokenizer
 
 # ── table extraction & structure ───────────────────────────────────
 lxml
